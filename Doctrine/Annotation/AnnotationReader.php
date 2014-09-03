@@ -43,7 +43,13 @@ class AnnotationReader
             }
 
             $property->setAccessible(true);
-            $annotation->value = $property->getValue($entity);
+            if(gettype($property->getValue($entity)) == 'object') {
+                $object = $property->getValue($entity);
+                $annotation->value = $object->getId();
+            } else {
+                $annotation->value = $property->getValue($entity);
+            }
+            //$annotation->value = $property->getValue($entity);
             $annotation->name = $property->getName();
 
             $fields[] = $annotation;
