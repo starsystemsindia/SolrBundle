@@ -344,6 +344,15 @@ class Solr
     private function addDocumentToIndex($doc, MetaInformation $metaInformation, Event $event)
     {
         try {
+            $delete = $this->solrClient->createUpdate();
+            $fields = $doc->getFields();
+            $id = $fields['id'];
+            $document_name_s = $fields['document_name_s'];
+            $delete->addDeleteQuery('id:'.$id.' AND document_name_s:'.$document_name_s.'');
+            $delete->addCommit();
+
+            $this->solrClient->update($delete);
+            
             $update = $this->solrClient->createUpdate();
             $update->addDocument($doc);
             $update->addCommit();
