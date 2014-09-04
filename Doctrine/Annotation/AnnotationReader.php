@@ -43,16 +43,28 @@ class AnnotationReader
             }
 
             $property->setAccessible(true);
-            if(gettype($property->getValue($entity)) == 'object') {
-                $object = $property->getValue($entity);
-                $annotation->value = $object->getId();
-            } else {
-                $annotation->value = $property->getValue($entity);
-            }
-            //$annotation->value = $property->getValue($entity);
+            $annotation->value = $property->getValue($entity);
             $annotation->name = $property->getName();
 
             $fields[] = $annotation;
+        }
+
+        $parentClass = $reflectionClass->getParentClass();
+        if($parentClass) {
+            $parentProperties = $parentClass->getProperties();
+            foreach ($parentProperties as $parentProperty) {
+                $annotation = $this->reader->getPropertyAnnotation($parentProperty, $type);
+
+                if (null === $annotation) {
+                    continue;
+                }
+
+                $parentProperty->setAccessible(true);
+                $annotation->value = $parentProperty->getValue($entity);
+                $annotation->name = $parentProperty->getName();
+
+                $fields[] = $annotation;
+            }
         }
 
         return $fields;
