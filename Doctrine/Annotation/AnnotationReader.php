@@ -43,7 +43,8 @@ class AnnotationReader
             }
 
             $property->setAccessible(true);
-            if(gettype($property->getValue($entity)) == 'object') {
+            //Notes:: Get refference mapping id and skip the DateTime object field
+            if(gettype($property->getValue($entity)) == 'object' && get_class($property->getValue($entity)) !=  'DateTime') {
                 $object = $property->getValue($entity);
                 $annotation->value = $object->getId();
             } else {
@@ -52,6 +53,13 @@ class AnnotationReader
             $annotation->name = $property->getName();
 
             $fields[] = $annotation;
+            //Notes:: Added New index field for postcode without space
+            if($property->getName() == 'postcode'){
+                $annotation = clone $annotation;
+                $annotation->value = str_replace(' ', '',$property->getValue($entity));
+                $annotation->name = 'postcodewithoutspace';
+                $fields[] = $annotation;
+            }
         }
 
         $parentClass = $reflectionClass->getParentClass();
