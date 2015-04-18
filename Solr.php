@@ -310,6 +310,10 @@ class Solr
     public function updateDocument($entity)
     {
         $metaInformations = $this->metaInformationFactory->loadInformation($entity);
+        
+        if (!$this->addToIndex($metaInformations, $entity)) {
+            return;
+        }
 
         $doc = $this->toDocument($metaInformations);
 
