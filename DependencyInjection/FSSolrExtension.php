@@ -62,6 +62,7 @@ class FSSolrExtension extends Extension
                 throw new RuntimeException(sprintf('The endpoint %s is not defined', $endpoint));
             }
 
+            $connectInformation = array();
             $connectInformation[$endpoint] = $config['endpoints'][$endpoint];
             $builderDefinition->replaceArgument(0, $connectInformation);
 
